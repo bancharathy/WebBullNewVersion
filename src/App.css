@@ -12,7 +12,7 @@
   grid-template-columns: 1.4fr 1fr;
   gap: 24px;
   align-items: center;
-  background: linear-gradient(135deg, #f7f7ff, #eef7ff);
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
   padding: 32px;
   border-radius: 24px;
   box-shadow: 0 20px 40px rgba(13, 36, 73, 0.08);
@@ -32,11 +32,11 @@
   font-size: 2.2rem;
   line-height: 1.2;
   margin: 0 0 14px;
-  color: #102a43;
+  color: white;
 }
 
 .hero p {
-  color: #486581;
+  color: #e2e8f0;
   margin-bottom: 12px;
 }
 
@@ -88,6 +88,15 @@
 .tip-card h3 {
   margin-top: 0;
   color: #102a43;
+}
+
+.feature-card p,
+.hero-card p,
+.hero-card li,
+.panel p,
+.tip-card p,
+.emergency-box p {
+  color: #475569;
 }
 
 .panel form {
