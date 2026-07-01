@@ -1,0 +1,138 @@
+.app-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 24px;
+  align-items: center;
+  background: linear-gradient(135deg, #f7f7ff, #eef7ff);
+  padding: 32px;
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(13, 36, 73, 0.08);
+}
+
+.badge {
+  display: inline-block;
+  background: #1d4ed8;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.hero h1 {
+  font-size: 2.2rem;
+  line-height: 1.2;
+  margin: 0 0 14px;
+  color: #102a43;
+}
+
+.hero p {
+  color: #486581;
+  margin-bottom: 12px;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.btn {
+  display: inline-block;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 16px;
+  cursor: pointer;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.btn-primary {
+  background: #2563eb;
+  color: white;
+}
+
+.btn-secondary {
+  background: #e2e8f0;
+  color: #102a43;
+}
+
+.hero-card,
+.feature-card,
+.panel {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+}
+
+.features {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.feature-card h3,
+.panel h2,
+.hero-card h3,
+.tip-card h3 {
+  margin-top: 0;
+  color: #102a43;
+}
+
+.panel form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.panel input,
+.panel textarea,
+.panel select {
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  font: inherit;
+}
+
+.panel textarea {
+  min-height: 90px;
+  resize: vertical;
+}
+
+.check-list {
+  padding-left: 20px;
+  color: #486581;
+}
+
+.tips-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.emergency-box {
+  background: #fff7ed;
+  border: 1px solid #fdba74;
+  border-radius: 16px;
+  padding: 16px;
+}
+
+@media (max-width: 900px) {
+  .hero,
+  .features,
+  .tips-grid {
+    grid-template-columns: 1fr;
+  }
+}
