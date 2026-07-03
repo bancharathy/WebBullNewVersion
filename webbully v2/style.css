@@ -1,0 +1,56 @@
+:root {
+  color-scheme: light;
+}
+
+body {
+  background-image:
+    radial-gradient(circle at top left, rgba(46, 125, 110, 0.08), transparent 35%),
+    radial-gradient(circle at bottom right, rgba(255, 111, 82, 0.08), transparent 26%);
+}
+
+body.loaded {
+  animation: pageFade 0.45s ease both;
+}
+
+main section {
+  position: relative;
+}
+
+.hero-card,
+.option-card,
+.res-card,
+.card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hero-card:hover,
+.option-card:hover,
+.res-card:hover,
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 22px 50px -24px rgba(22, 35, 63, 0.24);
+}
+
+header nav a.active {
+  color: var(--teal-dark);
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@keyframes pageFade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

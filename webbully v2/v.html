@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ហេវុន — មួយកន្លែងសុវត្ថិភាពសម្រាប់និយាយចេញ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  :root{
+    --bg: #F6F8FA;
+    --surface: #FFFFFF;
+    --ink: #16233F;
+    --ink-soft: #4B5A73;
+    --teal: #2E7D6E;
+    --teal-dark: #1F5C51;
+    --teal-tint: #E4F1EE;
+    --coral: #FF6F52;
+    --coral-dark: #E4552F;
+    --line: #E3E9EE;
+    --exit: #8B3A32;
+    --exit-tint: #FBEDEC;
+    --radius: 14px;
+  }
+ 
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.01ms !important; transition-duration:0.01ms !important;}
+  }
+ 
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Public Sans', sans-serif;
+    font-size:16px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+ 
+  h1,h2,h3{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    color:var(--ink);
+    margin:0 0 .5em 0;
+    line-height:1.15;
+  }
+ 
+  a{color:var(--teal-dark);}
+  p{margin:0 0 1em 0; color:var(--ink-soft);}
+ 
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.72rem;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--teal-dark);
+    font-weight:500;
+  }
+ 
+  button, .btn{
+    font-family:'Public Sans', sans-serif;
+    font-weight:600;
+    font-size:.95rem;
+    border-radius:999px;
+    border:none;
+    cursor:pointer;
+    padding:.85em 1.6em;
+    transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+  }
+  button:focus-visible, a:focus-visible, summary:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible{
+    outline:3px solid var(--teal-dark);
+    outline-offset:2px;
+  }
+ 
+  .btn-primary{ background:var(--coral); color:#fff; box-shadow:0 6px 16px rgba(255,111,82,.28); }
+  .btn-primary:hover{ background:var(--coral-dark); transform:translateY(-1px); }
+ 
+  .btn-secondary{ background:var(--surface); color:var(--teal-dark); border:1.5px solid var(--teal); }
+  .btn-secondary:hover{ background:var(--teal-tint); }
+ 
+  .btn-ghost{ background:transparent; color:var(--ink); border:1.5px solid var(--line); }
+  .btn-ghost:hover{ background:var(--surface); }
+ 
+  /* ---------- Quick Exit ---------- */
+  .exitbar{
+    position:fixed; top:0; left:0; right:0; z-index:1000;
+    background:var(--exit);
+    color:#fff;
+    display:flex; align-items:center; justify-content:center; gap:.6em;
+    font-family:'IBM Plex Mono', monospace;
+    font-size:.78rem;
+    padding:.5em 1em;
+    letter-spacing:.02em;
+  }
+  .exitbar button{
+    background:#fff; color:var(--exit);
+    padding:.4em 1.1em; font-size:.78rem;
+    font-family:'IBM Plex Mono', monospace;
+    letter-spacing:.04em;
+    box-shadow:none;
+  }
+  .exitbar button:hover{ background:#FBEDEC; }
+ 
+  header{
+    position:sticky; top:34px; z-index:900;
+    background:rgba(246,248,250,.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-wrap{
+    max-width:1120px; margin:0 auto; padding:.9em 1.5em;
+    display:flex; align-items:center; justify-content:space-between; gap:1em;
+  }
+  .logo{
+    display:flex; align-items:center; gap:.55em;
+    font-family:'Fraunces', serif; font-weight:700; font-size:1.25rem; color:var(--ink);
+    text-decoration:none;
+  }
+  .logo-mark{
+    width:30px; height:30px; border-radius:9px;
+    background:linear-gradient(135deg, var(--teal), var(--teal-dark));
+    display:flex; align-items:center; justify-content:center;
+  }
+  nav ul{ list-style:none; display:flex; gap:1.8em; margin:0; padding:0; }
+  nav a{ text-decoration:none; color:var(--ink-soft); font-weight:600; font-size:.92rem; }
+  nav a:hover{ color:var(--teal-dark); }
+  .nav-cta{ display:flex; gap:.7em; align-items:center; }
+ 
+  @media (max-width: 820px){
+    nav ul{ display:none; }
+  }
+ 
+  section{ padding:5em 1.5em; }
+  .wrap{ max-width:1120px; margin:0 auto; }
+  .wrap-narrow{ max-width:760px; margin:0 auto; }
+ 
+  /* ---------- Hero ---------- */
+  .hero{
+    padding-top:6em;
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, var(--teal-tint), transparent),
+      var(--bg);
+  }
+  .hero-grid{
+    display:grid; grid-template-columns:1.1fr .9fr; gap:3em; align-items:center;
+  }
+  @media (max-width:900px){ .hero-grid{ grid-template-columns:1fr; } }
+ 
+  .hero h1{ font-size:clamp(2.1rem, 4vw, 3.1rem); }
+  .hero .lede{ font-size:1.08rem; max-width:44ch; }
+  .hero-actions{ display:flex; gap:.9em; flex-wrap:wrap; margin-top:1.6em; }
+ 
+  .reassure{
+    margin-top:2em; display:flex; gap:.7em; align-items:flex-start;
+    font-family:'IBM Plex Mono', monospace; font-size:.78rem; color:var(--teal-dark);
+    background:var(--teal-tint); border:1px solid #CFE6E1; border-radius:10px; padding:.9em 1.1em;
+    max-width:44ch;
+  }
+ 
+  .hero-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    padding:1.8em; box-shadow:0 20px 40px -20px rgba(22,35,63,.18);
+  }
+  .hero-card h3{ font-size:1.05rem; }
+  .hero-card ul{ margin:0; padding-left:1.1em; color:var(--ink-soft); }
+  .hero-card li{ margin-bottom:.5em; }
+ 
+  /* ---------- Options ---------- */
+  .options{ background:var(--surface); border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+  .options-head{ text-align:center; max-width:640px; margin:0 auto 2.6em; }
+  .option-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:1.4em; }
+  @media (max-width:820px){ .option-grid{ grid-template-columns:1fr; } }
+  .option-card{
+    border:1px solid var(--line); border-radius:var(--radius); padding:1.7em;
+    background:var(--bg);
+    display:flex; flex-direction:column; gap:.7em;
+  }
+  .option-icon{
+    width:42px; height:42px; border-radius:11px; display:flex; align-items:center; justify-content:center;
+    background:var(--teal-tint); color:var(--teal-dark);
+  }
+  .option-card h3{ font-size:1.05rem; }
+  .option-card p{ font-size:.92rem; margin-bottom:.3em; }
+  .option-card .btn{ align-self:flex-start; margin-top:.4em; }
+ 
+  /* ---------- Report form ---------- */
+  .report-shell{
+    display:grid; grid-template-columns:.9fr 1.1fr; gap:2.6em; align-items:start;
+  }
+  @media (max-width:900px){ .report-shell{ grid-template-columns:1fr; } }
+ 
+  .report-side .eyebrow{ margin-bottom:.6em; display:block; }
+  .trust-points{ list-style:none; padding:0; margin:1.6em 0 0; display:flex; flex-direction:column; gap:1em; }
+  .trust-points li{ display:flex; gap:.8em; align-items:flex-start; color:var(--ink-soft); font-size:.94rem; }
+  .trust-points .dot{ width:8px; height:8px; border-radius:50%; background:var(--teal); margin-top:.5em; flex:none; }
+  
+  form.card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    padding:2em; box-shadow:0 20px 40px -28px rgba(22,35,63,.2);
+  }
+  .field{ margin-bottom:1.3em; }
+  .field label{ display:block; font-weight:600; font-size:.88rem; margin-bottom:.4em; }
+  .field .hint{ font-size:.8rem; color:var(--ink-soft); margin-top:.35em; }
+  input[type=text], input[type=email], select, textarea{
+    width:100%; padding:.75em .9em; border-radius:9px; border:1.5px solid var(--line);
+    font-family:'Public Sans', sans-serif; font-size:.95rem; color:var(--ink); background:#FCFDFE;
+  }
+  textarea{ min-height:110px; resize:vertical; }
+ 
+  .anon-toggle{
+    display:flex; align-items:center; justify-content:space-between; gap:1em;
+    background:var(--teal-tint); border:1px solid #CFE6E1; border-radius:11px; padding:.9em 1.1em; margin-bottom:1.6em;
+  }
+  .anon-toggle p{ margin:0; font-size:.86rem; color:var(--teal-dark); }
+  .switch{ position:relative; width:46px; height:26px; flex:none; }
+  .switch input{ opacity:0; width:0; height:0; }
+  .slider{
+    position:absolute; cursor:pointer; inset:0; background:#BFD3CE; border-radius:999px; transition:.2s;
+  }
+  .slider::before{
+    content:""; position:absolute; width:20px; height:20px; left:3px; top:3px; background:#fff; border-radius:50%; transition:.2s;
+  }
+  .switch input:checked + .slider{ background:var(--teal); }
+  .switch input:checked + .slider::before{ transform:translateX(20px); }
+ 
+  .row-2{ display:grid; grid-template-columns:1fr 1fr; gap:1.1em; }
+  @media (max-width:520px){ .row-2{ grid-template-columns:1fr; } }
+ 
+  .upload-box{
+    border:1.5px dashed var(--line); border-radius:11px; padding:1.3em; text-align:center;
+    color:var(--ink-soft); font-size:.85rem; background:#FCFDFE;
+  }
+ 
+  .confirm{ display:none; text-align:center; padding:1.5em 0; }
+  .confirm.show{ display:block; }
+  .confirm .ref{
+    font-family:'IBM Plex Mono', monospace; background:var(--teal-tint); color:var(--teal-dark);
+    padding:.5em 1em; border-radius:8px; display:inline-block; margin:.8em 0 1.2em;
+  }
+  .confirm-icon{
+    width:52px; height:52px; border-radius:50%; background:var(--teal); color:#fff;
+    display:flex; align-items:center; justify-content:center; margin:0 auto 1em;
+  }
+ 
+  /* ---------- Protect yourself ---------- */
+  .protect{ background:var(--surface); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .protect-head{ max-width:640px; margin-bottom:2.4em; }
+  .protect-grid{ display:grid; grid-template-columns:1fr 1fr; gap:1.1em; }
+  @media (max-width:820px){ .protect-grid{ grid-template-columns:1fr; } }
+ 
+  details.tip{
+    border:1px solid var(--line); border-radius:var(--radius); background:var(--bg);
+    padding:0; overflow:hidden;
+  }
+  details.tip summary{
+    list-style:none; cursor:pointer; padding:1.2em 1.4em; display:flex; align-items:center; gap:.9em;
+    font-weight:600; font-family:'Fraunces', serif; font-size:1.02rem;
+  }
+  details.tip summary::-webkit-details-marker{ display:none; }
+  details.tip summary .tag{
+    font-family:'IBM Plex Mono', monospace; font-size:.68rem; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--teal-dark); background:var(--teal-tint); padding:.3em .6em; border-radius:6px; flex:none;
+  }
+  details.tip summary .chev{ margin-left:auto; color:var(--ink-soft); transition:transform .2s ease; flex:none; }
+  details.tip[open] summary .chev{ transform:rotate(45deg); }
+  details.tip .tip-body{ padding:0 1.4em 1.4em 1.4em; }
+  details.tip .tip-body ul{ margin:0; padding-left:1.2em; color:var(--ink-soft); font-size:.92rem; }
+  details.tip .tip-body li{ margin-bottom:.5em; }
+ 
+  /* ---------- Resources ---------- */
+  .resources-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:1.1em; }
+  @media (max-width:960px){ .resources-grid{ grid-template-columns:repeat(2, 1fr); } }
+  @media (max-width:560px){ .resources-grid{ grid-template-columns:1fr; } }
+  .res-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:1.5em;
+  }
+  .res-card .eyebrow{ display:block; margin-bottom:.5em; }
+  .res-card h3{ font-size:1rem; margin-bottom:.3em; }
+  .res-card p{ font-size:.86rem; margin-bottom:.6em; }
+  .res-card .num{ font-family:'IBM Plex Mono', monospace; color:var(--ink); font-weight:500; font-size:.88rem; }
+ 
+  .emergency-note{
+    margin-top:1.8em; border-radius:11px; border:1px solid #F0D3CE; background:var(--exit-tint);
+    color:var(--exit); padding:1em 1.3em; font-size:.9rem;
+  }
+ 
+  /* ---------- FAQ ---------- */
+  .faq{ background:var(--bg); }
+  .faq-list{ display:flex; flex-direction:column; gap:.8em; }
+  details.faq-item{ background:var(--surface); border:1px solid var(--line); border-radius:11px; padding:0; }
+  details.faq-item summary{
+    cursor:pointer; list-style:none; padding:1.1em 1.3em; font-weight:600; display:flex; gap:1em; align-items:center;
+  }
+  details.faq-item summary::-webkit-details-marker{ display:none; }
+  details.faq-item summary .chev{ margin-left:auto; color:var(--ink-soft); transition:transform .2s ease; }
+  details.faq-item[open] summary .chev{ transform:rotate(45deg); }
+  details.faq-item .faq-body{ padding:0 1.3em 1.2em; color:var(--ink-soft); font-size:.92rem; }
+ 
+  footer{ background:var(--ink); color:#CBD5E5; padding:3em 1.5em 2em; }
+  .footer-wrap{ max-width:1120px; margin:0 auto; display:flex; flex-wrap:wrap; gap:2em; justify-content:space-between; }
+  footer h3{ color:#fff; font-size:1rem; }
+  footer a{ color:#CBD5E5; }
+  .footer-brand{ max-width:340px; }
+  .footer-brand p{ color:#9FB0C7; font-size:.88rem; }
+  .footer-cols{ display:flex; gap:3em; flex-wrap:wrap; }
+  .footer-cols ul{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.6em; font-size:.88rem; }
+  .footer-bottom{
+    max-width:1120px; margin:2.5em auto 0; padding-top:1.5em; border-top:1px solid #2A3A5C;
+    font-size:.78rem; color:#7E90AC; display:flex; justify-content:space-between; flex-wrap:wrap; gap:.8em;
+  }
+</style>
+</head>
+<body>
+ 
+<div class="exitbar">
+  <span>⎋ អ្នកអាចចាកចេញពីទំព័រនេះភ្លាមៗ ហើយវាគ្មាននៅក្នុងប្រវត្តិរុករករបស់អ្នក។</span>
+  <button id="exitBtnTop" type="button">ចាកចេញឆាប់</button>
+</div>
+ 
+<header>
+  <div class="nav-wrap">
+    <a href="#top" class="logo">
+      <span class="logo-mark" aria-hidden="true"></span>
+      Haven
+    </a>
+    <nav aria-label="Primary">
+      <ul>
+        <li><a href="#report">រាយការណ៍</a></li>
+        <li><a href="#protect">ការពារខ្លួន</a></li>
+        <li><a href="#resources">អ្នកទំនាក់ទំនងដែលទុកចិត្ត</a></li>
+        <li><a href="#faq">សំណួរ</a></li>
+      </ul>
+    </nav>
+    <div class="nav-cta">
+      <a href="#report" class="btn btn-primary">រាយការណ៍ឥឡូវនេះ</a>
+    </div>
+  </div>
+</header>
+ 
+<main id="top">
+ 
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">សម្រាប់សិស្ស តែដោយអ្នកដែលគាំទ្រអ្នក</span>
+        <h1>អ្នកមិននៅលីវទេ។ នេះជាកន្លែងសុវត្ថិភាពសម្រាប់និយាយចេញ។</h1>
+        <p class="lede">អស់ពីវាត្រូវបានកើតឡើងម្តង ឬកំពុងបន្តរាប់សប្តាហ៍ — លើអ៊ីនធឺណិត នៅក្នុងហាលវេ ឬក្នុងក្រុមជជែក — ការរាយការណ៍ទៅនរណាម្នាក់គឺជាជំហានទីមួយដើម្បីឲ្យវាបញ្ឈប់។ អ្នកជ្រើសរើសថាអ្នកចង់ចែករំលែកប៉ុន្មាន និងថាតើនរណាម្នាក់ដឹងថាវាជាអ្នកឬទេ។</p>
+        <div class="hero-actions">
+          <a href="#report" class="btn btn-primary">រាយការណ៍ការល្មើស</a>
+          <a href="#resources" class="btn btn-secondary">និយាយជាមួយនរណាម្នាក់ទាំងនេះ</a>
+        </div>
+        <div class="reassure">
+          <span>🛡</span>
+          <span>ចាកចេញពីទំព័រនេះ៖ ចុច "ចាកចេញឆាប់" ពេលណាក៏បាន ឬចុច <strong>Esc</strong> បីដងយ៉ាងឆាប់ — អ្នកនឹងត្រូវបានផ្លាស់ទៅទំព័រផ្សេងភ្លាមៗ។</span>
+        </div>
+      </div>
+      <div class="hero-card">
+        <h3>មុនពេលអ្នករាយការណ៍ សូមដឹងអំពីរឿងទាំងនេះ</h3>
+        <ul>
+          <li>មិនដែលជាកំហុសរបស់អ្នកទេ។ ការរាយការណ៍មិនមែនជាការតៅចោលទេ — វាជាការស្នើសុំជំនួយ។</li>
+          <li>អ្នកអាចនៅស្ងាត់ស្និទ្ធបាន។ មិនត្រូវការឈ្មោះឬការចូលប្រើ។</li>
+          <li>មនុស្សពេញវ័យជាក់ស្តែងនឹងអានរាយការណ៍រាល់រឿង — មិនមែនរ៉ូបូត មិនមែនឃ្លាំងទិន្នន័យ។</li>
+          <li>អ្នកអាចឈប់ សន្សំ ឬត្រឡប់មកវិញនឹងរាយការណ៍របស់អ្នកពេលណាមួយ។</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+ 
+  <!-- OPTIONS -->
+  <section class="options" id="options">
+    <div class="wrap">
+      <div class="options-head">
+        <span class="eyebrow">ជ្រើសរើសអ្វីដែលដូចជា​ត្រឹមត្រូវ</span>
+        <h2>មានវិធីជាច្រើនក្នុងការប្រាប់នរណាម្នាក់</h2>
+        <p>ខ្លះចូលចិត្តវាយអក្សរយ៉ាងឯកជន។ ខ្លះចង់និយាយមុខម្កើង។ ទាំងពីរមានសេចក្តីត្រឹមត្រូវ — ប្រើតាមដែលធ្វើអោយអ្នកត្រូវស្តាប់។</p>
+      </div>
+      <div class="option-grid">
+        <div class="option-card">
+          <div class="option-icon">✎</div>
+          <h3>រាយការណ៍តាមអ៊ីនធឺណិត</h3>
+          <p>បំពេញទម្រង់ខ្លីក្នុងផ្នែកខាងក្រោម។ លំហស្ងាត់ដើម — បញ្ចូលឈ្មោះតែបើអ្នកចង់តាមដានបន្ត។</p>
+          <a href="#report" class="btn btn-ghost">ទៅកាន់ទម្រង់ ↓</a>
+        </div>
+        <div class="option-card">
+          <div class="option-icon">🗣</div>
+          <h3>ប្រាប់មនុស្សពេញវ័យដែលទុកចិត្តបាន</h3>
+          <p>អ្នកប្រឹក្សា គ្រូបង្រៀន ឬសមាជិកគ្រួសារ អាចដំណើរការបន្ទាន់ និងនៅជាមួយអ្នក។</p>
+          <a href="#resources" class="btn btn-ghost">មើលថាត្រូវទាក់ទងនរណា</a>
+        </div>
+        <div class="option-card">
+          <div class="option-icon">☎</div>
+          <h3>ទូរស័ព្ទឬសរសេរទៅតាមខ្សែជំនួយ</h3>
+          <p>ប្រសិនបើអ្នកចង់និយាយជាមួយនរណាម្នាក់ក្រៅសាលា អ្នកព្យាបាលដែលបានបណ្ដុះបណ្ដាលអាចឈានដល់បានថ្ងែ ឬយប់។</p>
+          <a href="#resources" class="btn btn-ghost">មើលខ្សែទំនាក់ទំនងជំនួយ</a>
+        </div>
+      </div>
+    </div>
+  </section>
+ 
+  <!-- REPORT FORM -->
+  <section class="report-section" id="report">
+    <div class="wrap report-shell">
+      <div class="report-side">
+        <span class="eyebrow">រាយការណ៍វា</span>
+        <h2>ប្រាប់យើងអំពីអ្វីដែលកើតឡើង</h2>
+        <p>ចែករំលែកអស់ដែលធូរស្បើយឬតិចប៉ុណ្ណា។ វាលទាំងអស់ក្រៅតែសេចក្តីពិពណ៌នាខ្លីគឺជារើសបាន។</p>
+        <ul class="trust-points">
+          <li><span class="dot"></span> ក្រុមប្រឹក្សាសាលារបស់អ្នកតែប៉ុណ្ណោះអាចមើលឃើញវា — វាមិនបានផុស ឬចែករំលែកជាមួយមិត្តរួមថ្នាក់។</li>
+          <li><span class="dot"></span> អ្នកនឹងទទួលបានលេខកូដសំគាល់ ដើម្បីអាចពិនិត្យវាផ្សេងពេលក្រោយដោយមិនឲ្យឈ្មោះ។</li>
+          <li><span class="dot"></span> បើអ្នករាយការណ៍អំពីគ្រោះថ្នាក់ភ្លាមៗ មនុស្សពេញវ័យដែលទុកចិត្តបាននឹងទាក់ទងអ្នកក្នុងថ្ងៃនោះ។</li>
+        </ul>
+      </div>
+ 
+      <div>
+        <form class="card" id="reportForm">
+          <div class="anon-toggle">
+            <p>រាយការណ៍ដោយស្ងាត់<br><span style="opacity:.8">ឈ្មោះអ្នកនឹងមិនបង្ហាញនៅក្នុងរាយការណ៍ទេ</span></p>
+            <label class="switch">
+              <input type="checkbox" id="anonToggle" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+ 
+          <div id="nameFields">
+            <div class="row-2">
+              <div class="field">
+                <label for="fname">ឈ្មោះរបស់អ្នក</label>
+                <input type="text" id="fname" placeholder="ជាជម្រើស">
+              </div>
+              <div class="field">
+                <label for="fgrade">ថ្នាក់ / ឆ្នាំ</label>
+                <input type="text" id="fgrade" placeholder="ជាជម្រើស">
+              </div>
+            </div>
+          </div>
+ 
+          <div class="field">
+            <label for="fwhat">មានអ្វីកើតឡើង? *</label>
+            <textarea id="fwhat" required placeholder="ពិពណ៌នាអំពីអ្វីកើតឡើង តាមដែលអ្នកចាំបាន។"></textarea>
+            <div class="hint">រួមបញ្ចូលថ្ងៃ ខែ កន្លែង ឬឈ្មោះអ្នកប្រើប្រសិនបើអ្នកដឹង — វាអាចជួយបាន ប៉ុន្តែមិនចាំបាច់។</div>
+          </div>
+ 
+          <div class="row-2">
+            <div class="field">
+              <label for="fwhere">វាកើតឡើងនៅណា?</label>
+              <select id="fwhere">
+                <option>ក្នុងថ្នាក់</option>
+                <option>បន្ទប់ដើរ / តំបន់ទូរទស្សន៍</option>
+                <option>សាលាអាហារ</option>
+                <option>កីឡា / សកម្មភាពក្រោយសាលា</option>
+                <option>លើអ៊ីនធឺណិត / ប្រព័ន្ធសង្គម</option>
+                <option>ក្រុមជជែក ឬកម្មវិធីផ្ញើសារ</option>
+                <option>កន្លែងផ្សេងទៀត</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="furgency">អ្នកមានអារម្មណ៍ថាវាបន្ទាន់ប៉ុណ្ណា?</label>
+              <select id="furgency">
+                <option>វាកំពុងបន្ត ខ្ញុំចង់ឲ្យវាបញ្ឈប់</option>
+                <option>វាកើតឡើងម្តង</option>
+                <option>ខ្ញុំភ័យសុវត្ថិភាពរបស់ខ្ញុំឥឡូវនេះ</option>
+              </select>
+            </div>
+          </div>
+ 
+          <div class="field">
+            <label>ភស្តុតាង (ជាជម្រើស)</label>
+            <div class="upload-box">រូបថតអេក្រង់ សារ ឬរូបថត — ជម្លាក់ឯកសារនៅទីនេះ ឬចុចដើម្បីអាប់ឡូត</div>
+          </div>
+ 
+          <button type="submit" class="btn btn-primary" style="width:100%;">ដាក់សំណើរ</button>
+        </form>
+ 
+        <div class="card confirm" id="confirmPanel">
+          <div class="confirm-icon">✓</div>
+          <h3>រាយការណ៍របស់អ្នកត្រូវបានទទួល</h3>
+          <p>បុគ្គលិកដែលទុកចិត្តបាននឹងអានវា ហើយដាក់ជំហានបន្តដែលធ្វើឲ្យអ្នកមានសុវត្ថិភាព។</p>
+          <div class="ref" id="refCode">REF-0000</div>
+          <p style="font-size:.85rem;">រក្សាទុកកូដនេះ — អ្នកអាចប្រើវាដើម្បីពិនិត្យរាយការណ៍របស់អ្នក ឬបន្ថែមព័ត៌មានក្រោយ។</p>
+          <button type="button" class="btn btn-secondary" id="resetForm">ដាក់សំណើរមួយទៀត</button>
+        </div>
+      </div>
+    </div>
+  </section>
+ 
+  <!-- PROTECT YOURSELF -->
+  <section class="protect" id="protect">
+    <div class="wrap">
+      <div class="protect-head">
+        <span class="eyebrow">ដោយឡែកពេលដែលរឿងត្រូវបានដំណើរការ</span>
+        <h2>វិធីការពារខ្លួនជាថ្មី ចាប់ពីថ្ងៃនេះ</h2>
+        <p>ការរាយការណ៍ចាប់ផ្តើមដំណើរការ — នេះជា​អ្វីដែលអ្នកអាចធ្វើបានឥឡូវនេះ ដោយខ្លួនឯង ដើម្បីមានអារម្មណ៍សុវត្ថិភាព។</p>
+      </div>
+ 
+      <div class="protect-grid">
+        <details class="tip" open>
+          <summary><span class="tag">ផ្ទាល់</span> ការរក្សាសុវត្ថិភាពរៀងរាល់ថ្ងៃ <span class="chev">+</span></summary>
+          <div class="tip-body">
+            <ul>
+              <li>ស្ថិតនៅជិតមិត្ត ឬគ្រូពេលវេលា ឬកន្លែងដែលវាទូទៅកើតឡើង — ការរំលោភថ្នាក់តិចជាងពេលមានមនុស្សនៅជុំវិញ។</li>
+              <li>វាជាការល្អដែលដើរចេញដោយមិនឆ្លើយតប។ ដំណើរក្នុងអំឡុងនេះមិនមែនបាត់បង់។</li>
+              <li>យល់ព្រមលើសញ្ញាមួយជាមួយមិត្ត ដើម្បីឲ្យពួកគេដឹងពេលណានឹងជួយ ឬយកមនុស្សពេញវ័យ។</li>
+              <li>លែងការធ្វើវិញដោយរាងកាយ — វាអាចធ្វើឲ្យអ្នកមានហានិភ័យ ទោះបីជាអ្នកគឺជាគោលដៅ។</li>
+            </ul>
+          </div>
+        </details>
+ 
+        <details class="tip">
+          <summary><span class="tag">លើអ៊ីនធឺណិត</span> ការការពារខ្លួនឌីជីថល <span class="chev">+</span></summary>
+          <div class="tip-body">
+            <ul>
+              <li>កំណត់ប្រវត្តិរូបឲ្យឯកជន ហើយដកអ្នកដែលធ្វើឲ្យអ្នកមិនសុខដុម — អ្នកមិនមានការទទួលបន្ទុកចំពោះការចូលដំណើរការរបស់នរណា។</li>
+              <li>ប្លុក និងដាក់សម្លេងទំនក់ជំនួញ មិនឆ្លើយតប។ ការចូលរួមជាញឹកញាប់ធ្វើឲ្យវាឡើងកម្រិត។</li>
+              <li>កុំលុបសារទាំងនោះ — ថតអេក្រង់ជាមុន ទោះជាសារធ្វើឲ្យរអ៊ូរទុក្ខក៏ដោយ។ វាជាភស្តុតាង។</li>
+              <li>កុំចែករំលែកពាក្យសម្ងាត់ ទោះជាជាមួយមិត្តស្និទ្ធក៏ដោយ។</li>
+            </ul>
+          </div>
+        </details>
+ 
+        <details class="tip">
+          <summary><span class="tag">កំណត់ត្រា</span> រក្សាទុកឯកសារ <span class="chev">+</span></summary>
+          <div class="tip-body">
+            <ul>
+              <li>សរសេរថ្ងៃ ខែ ម៉ោង កន្លែង និងអ្វីដែលបាននិយាយ ឬបានធ្វើ ដោយឆាប់បំផុតក្រោយពីវាកើតឡើង។</li>
+              <li>រក្សាទុករូបថតអេក្រង់ទៅថតដែលអ្នកតែប៉ុណ្ណោះអាចចូលប្រើ មិនត្រឹមតែកាមេរ៉ាឡូទេ។</li>
+              <li>កត់សម្គាល់អ្នកឃើញ — មនុស្សដែលឃើញវាកើតឡើងអាចគាំទ្ររាយការណ៍របស់អ្នក។</li>
+              <li>រក្សាឯកសារនោះបន្ត ទោះបីរាយការណ៍រួចហើយ; លំនាំមានសារៈសំខាន់ប្រសិនបើវាបន្ត។</li>
+            </ul>
+          </div>
+        </details>
+ 
+        <details class="tip">
+          <summary><span class="tag">សុខភាពចិត្ត</span> ការប្រុងប្រយ័ត្នអារម្មណ៍របស់អ្នក <span class="chev">+</span></summary>
+          <div class="tip-body">
+            <ul>
+              <li>អ្វីដែលកើតឡើងមិនមែនជារឿងដែលអ្នកបង្កើត ឬសមបានទេ។</li>
+              <li>វា​ធម្មតា​ដែលមានអារម្មណ៍ខឹង ស្រអាព្រោះ ឬធ្លាក់ចិត្ត — និស្ស័យទាំងនោះគឺសុពល។</li>
+              <li>និយាយជាមួយនរណាម្នាក់ដែលអ្នកទុកចិត្តអំពីរបៀបវាស្របតាមអ្នក មិនត្រឹមតែអំពីអ្វីដែលកើតឡើង។</li>
+              <li>បើវាផលប៉ះពាល់ដល់ការគេង ការហៀប ឬអ្នកមានអារម្មណ៍មិនសុវត្ថិភាព ជាមួយខ្លួនឯង សូមប្រាប់មនុស្សពេញវ័យភ្លាមៗ — នោះសំខាន់ដូចការល្មើសផ្ទាល់។</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+ 
+  <!-- RESOURCES -->
+  <section id="resources">
+    <div class="wrap">
+      <span class="eyebrow">មនុស្សដែលអ្នកអាចទៅរក</span>
+      <h2>អ្នកទំនាក់ទំនងដែលទុកចិត្តបាន</h2>
+      <p class="wrap-narrow">បន្ថែមព័ត៌មានពិតនៃសាលារបស់អ្នកនៅទីនេះ។ មនុស្សណាមួយក្នុងចំណោមនេះអាចជួយបាន មិនថាអ្នកបានដាក់សំណើរតាមអ៊ីនធឺណិត ឬមិនបានដាក់សំណើរទេ។</p>
+ 
+      <div class="resources-grid" style="margin-top:2em;">
+        <div class="res-card">
+          <span class="eyebrow">សាលា</span>
+          <h3>អ្នកប្រឹក្សាសាលា</h3>
+          <p>គាំទ្រសម្ងាត់ មួយទៅមួយ ក្នុងម៉ោងសាលា។</p>
+          <div class="num">[បន្ថែមឈ្មោះ និងលេខបន្ទប់]</div>
+        </div>
+        <div class="res-card">
+          <span class="eyebrow">សាលា</span>
+          <h3>គណៈកម្មការប្រឆាំងការល្មើស</h3>
+          <p>ដំណើរការសืบสวนផ្លូវការនិងតាមដាន។</p>
+          <div class="num">[បន្ថែមព័ត៌មានទំនាក់ទំនង]</div>
+        </div>
+        <div class="res-card">
+          <span class="eyebrow">ខ្សែជំនួយ</span>
+          <h3>ខ្សែជំនួយជាតិតាមតំបន់</h3>
+          <p>មិនគិតថ្លៃ សម្ងាត់ មានស្រាប់ក្រៅម៉ោងសាលា។</p>
+          <div class="num">[បន្ថែមលេខខ្សែជំនួយក្នុងតំបន់]</div>
+        </div>
+        <div class="res-card">
+          <span class="eyebrow">សង្គ្រោះ</span>
+          <h3>គ្រោះថ្នាក់ទាន់ពេល</h3>
+          <p>បើអ្នក ឬនរណាម្នាក់នៅក្នុងគ្រោះថ្នាក់ឥឡូវនេះ។</p>
+          <div class="num">[បន្ថែមលេខសង្គ្រោះក្នុងតំបន់]</div>
+        </div>
+      </div>
+ 
+      <div class="emergency-note">
+        បើអ្នកស្ថិតនៅក្នុងគ្រោះថ្នាក់ភ្លាមៗ ឬគិតពីការខូចខាតខ្លួន សូមទាក់ទងសេវាអាសន្នក្នុងតំបន់ ឬខ្សែទំនាក់ទំនងវិនាតដោយឆាប់។ ទំព័រនេះគ្រាន់តែជាចំណុចចាប់ផ្តើម — មិនមែនជំនួសសម្រាប់ជំនួយបន្ទាន់នៅម្ខាងផ្ទាល់ទេ។
+      </div>
+    </div>
+  </section>
+ 
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <div class="wrap wrap-narrow">
+      <span class="eyebrow">សំណួរដែលជាញឹកញាប់</span>
+      <h2>មុនពេលអ្នករាយការណ៍</h2>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>ឪពុកម្តាយរបស់ខ្ញុំនឹងត្រូវបានប្រាប់ដោយស្វ័យប្រវត្តិទេ? <span class="chev">+</span></summary>
+          <div class="faq-body">មិនដោយស្វ័យប្រវត្តិទេ។ បុគ្គលិកភាគច្រើននឹងនិយាយជាមួយអ្នកជាមុនអំពីនរណាត្រូវដឹង និងពេលណា — លើកលែងតែករណីសុវត្ថិភាពរបស់អ្នកត្រូវការ រៀបចំឲ្យឪពុកម្តាយ ឬអ្នកតំណាងភ្លាម។</div>
+        </details>
+        <details class="faq-item">
+          <summary>តើខ្ញុំអាចនៅស្ងាត់បានពិតមែនទេ? <span class="chev">+</span></summary>
+          <div class="faq-body">យល់ព្រម។ ជំនួរស្ងាត់ត្រូវបានបើដើម។ ប្រសិនបើអ្នកទុកវា ឈ្មោះ ឬការចូលប្រើ ឬព័ត៌មានឧបករណ៍ មិនត្រូវបានភ្ជាប់ទៅរាយការណ៍។</div>
+        </details>
+        <details class="faq-item">
+          <summary>បើខ្ញុំមិនប្រាកដថាវា "ការល្មើស" មែនទេ? <span class="chev">+</span></summary>
+          <div class="faq-body">ក៏បោះបង់វាទៅផង។ អ្នកមិនចាំបាច់ដាក់ស្លាកឲ្យបានត្រឹមត្រូវ — ប្រសិនបើវាធ្វើឲ្យអ្នកមានអារម្មណ៍មិនសុវត្ថិភាព ឬគឺជាការគំរាមទ្រ khu, វាគួរតែប្រាប់នរណាម្នាក់។</div>
+        </details>
+        <details class="faq-item">
+          <summary>តើមានអ្វីកើតឡើងបន្ទាប់ពីខ្ញុំដាក់សំណើរមួយ? <span class="chev">+</span></summary>
+          <div class="faq-body">បុគ្គលិកម្នាក់ពិនិត្យវា ជាធម្មតាក្នុងមួយថ្ងៃសាលា ហើយសម្រេចចិត្តពីជំហានបន្ថែម — ដែលអាចរួមមានការត្រួតពិនិត្យជាមួយអ្នកជាមុន ដោយស្ងាត់ មុនគេធ្វើអ្វីផ្សេងទៀត។</div>
+        </details>
+      </div>
+    </div>
+  </section>
+ 
+</main>
+ 
+<footer>
+  <div class="footer-wrap">
+    <div class="footer-brand">
+      <h3>Haven</h3>
+      <p>មហោស្រពស្ងាត់ សុវត្ថិភាពនៃតំបន់សាលាសម្រាប់សិស្សក្នុងការរាយការណ៍ការល្មើស និងស្វែងរកគាំទ្រ — បង្កើតដោយឯកភាពសុវត្ថិភាព និងភាពឯកជនរបស់អ្នក។</p>
+    </div>
+    <div class="footer-cols">
+      <div>
+        <h3>តំបន់</h3>
+        <ul>
+          <li><a href="#report">រាយការណ៍ការល្មើស</a></li>
+          <li><a href="#protect">ការពារខ្លួន</a></li>
+          <li><a href="#resources">អ្នកទំនាក់ទំនងដែលទុកចិត្ត</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>ចាកចេញយ៉ាងសុវត្ថិភាព</h3>
+        <ul>
+          <li><button id="exitBtnFooter" type="button" class="btn btn-ghost" style="color:#CBD5E5;border-color:#3A4A6C;">ចាកចេញឆាប់ ⎋</button></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>ទំព័រនេះមិនតាមដាន ឬរក្សាទុកសកម្មភាពរុករករបស់អ្នកទេ។</span>
+    <span>គំរូ — ជំនួសព័ត៌មានទំនាក់ទំនងជំនួសដោយព័ត៌មានពិតនៃសាលារបស់អ្នក។</span>
+  </div>
+</footer>
+ 
+<script src="script.js"></script>
+ 
+</body>
+</html>
+ 
+  form.card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius);
+    padding:2em; box-shadow:0 20px 40px -28px rgba(22,35,63,.2);
+  }
+  .field{ margin-bottom:1.3em; }
+  .field label{ display:block; font-weight:600; font-size:.88rem; margin-bottom:.4em; }
+  .field .hint{ font-size:.8rem; color:var(--ink-soft); margin-top:.35em; }
+  input[type=text], input[type=email], select, textarea{
+    width:100%; padding:.75em .9em; border-radius:9px; border:1.5px solid var(--line);
+    font-family:'Public Sans', sans-serif; font-size:.95rem; color:var(--ink); background:#FCFDFE;
+  }
+  textarea{ min-height:110px; resize:vertical; }
+ 
+  .anon-toggle{
+    display:flex; align-items:center; justify-content:space-between; gap:1em;
+    background:var(--teal-tint); border:1px solid #CFE6E1; border-radius:11px; padding:.9em 1.1em; margin-bottom:1.6em;
+  }
+  .anon-toggle p{ margin:0; font-size:.86rem; color:var(--teal-dark); }
+  .switch{ position:relative; width:46px; height:26px; flex:none; }
+  .switch input{ opacity:0; width:0; height:0; }
+  .slider{
+    position:absolute; cursor:pointer; inset:0; background:#BFD3CE; border-radius:999px; transition:.2s;
+  }
+  .slider::before{
+    content:""; position:absolute; width:20px; height:20px; left:3px; top:3px; background:#fff; border-radius:50%; transition:.2s;
+  }
+  .switch input:checked + .slider{ background:var(--teal); }
+  .switch input:checked + .slider::before{ transform:translateX(20px); }
+ 
+  .row-2{ display:grid; grid-template-columns:1fr 1fr; gap:1.1em; }
+  @media (max-width:520px){ .row-2{ grid-template-columns:1fr; } }
+ 
+  .upload-box{
+    border:1.5px dashed var(--line); border-radius:11px; padding:1.3em; text-align:center;
+    color:var(--ink-soft); font-size:.85rem; background:#FCFDFE;
+  }
+ 
+  .confirm{ display:none; text-align:center; padding:1.5em 0; }
+  .confirm.show{ display:block; }
+  .confirm .ref{
+    font-family:'IBM Plex Mono', monospace; background:var(--teal-tint); color:var(--teal-dark);
+    padding:.5em 1em; border-radius:8px; display:inline-block; margin:.8em 0 1.2em;
+  }
+  .confirm-icon{
+    width:52px; height:52px; border-radius:50%; background:var(--teal); color:#fff;
+    display:flex; align-items:center; justify-content:center; margin:0 auto 1em;
+  }
+ 
+  /* ---------- Protect yourself ---------- */
+  .protect{ background:var(--surface); border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+  .protect-head{ max-width:640px; margin-bottom:2.4em; }
+  .protect-grid{ display:grid; grid-template-columns:1fr 1fr; gap:1.1em; }
+  @media (max-width:820px){ .protect-grid{ grid-template-columns:1fr; } }
+ 
+  details.tip{
+    border:1px solid var(--line); border-radius:var(--radius); background:var(--bg);
+    padding:0; overflow:hidden;
+  }
+  details.tip summary{
+    list-style:none; cursor:pointer; padding:1.2em 1.4em; display:flex; align-items:center; gap:.9em;
+    font-weight:600; font-family:'Fraunces', serif; font-size:1.02rem;
+  }
+  details.tip summary::-webkit-details-marker{ display:none; }
+  details.tip summary .tag{
+    font-family:'IBM Plex Mono', monospace; font-size:.68rem; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--teal-dark); background:var(--teal-tint); padding:.3em .6em; border-radius:6px; flex:none;
+  }
+  details.tip summary .chev{ margin-left:auto; color:var(--ink-soft); transition:transform .2s ease; flex:none; }
+  details.tip[open] summary .chev{ transform:rotate(45deg); }
+  details.tip .tip-body{ padding:0 1.4em 1.4em 1.4em; }
+  details.tip .tip-body ul{ margin:0; padding-left:1.2em; color:var(--ink-soft); font-size:.92rem; }
+  details.tip .tip-body li{ margin-bottom:.5em; }
+ 
+  /* ---------- Resources ---------- */
+  .resources-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:1.1em; }
+  @media (max-width:960px){ .resources-grid{ grid-template-columns:repeat(2, 1fr); } }
+  @media (max-width:560px){ .resources-grid{ grid-template-columns:1fr; } }
+  .res-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:var(--radius); padding:1.5em;
+  }
+  .res-card .eyebrow{ display:block; margin-bottom:.5em; }
+  .res-card h3{ font-size:1rem; margin-bottom:.3em; }
+  .res-card p{ font-size:.86rem; margin-bottom:.6em; }
+  .res-card .num{ font-family:'IBM Plex Mono', monospace; color:var(--ink); font-weight:500; font-size:.88rem; }
+ 
+  .emergency-note{
+    margin-top:1.8em; border-radius:11px; border:1px solid #F0D3CE; background:var(--exit-tint);
+    color:var(--exit); padding:1em 1.3em; font-size:.9rem;
+  }
+ 
+  /* ---------- FAQ ---------- */
+  .faq{ background:var(--bg); }
+  .faq-list{ display:flex; flex-direction:column; gap:.8em; }
+  details.faq-item{ background:var(--surface); border:1px solid var(--line); border-radius:11px; padding:0; }
+  details.faq-item summary{
+    cursor:pointer; list-style:none; padding:1.1em 1.3em; font-weight:600; display:flex; gap:1em; align-items:center;
+  }
+  details.faq-item summary::-webkit-details-marker{ display:none; }
+  details.faq-item summary .chev{ margin-left:auto; color:var(--ink-soft); transition:transform .2s ease; }
+  details.faq-item[open] summary .chev{ transform:rotate(45deg); }
+  details.faq-item .faq-body{ padding:0 1.3em 1.2em; color:var(--ink-soft); font-size:.92rem; }
+ 
+  footer{ background:var(--ink); color:#CBD5E5; padding:3em 1.5em 2em; }
+  .footer-wrap{ max-width:1120px; margin:0 auto; display:flex; flex-wrap:wrap; gap:2em; justify-content:space-between; }
+  footer h3{ color:#fff; font-size:1rem; }
+  footer a{ color:#CBD5E5; }
+  .footer-brand{ max-width:340px; }
+  .footer-brand p{ color:#9FB0C7; font-size:.88rem; }
+  .footer-cols{ display:flex; gap:3em; flex-wrap:wrap; }
+  .footer-cols ul{ list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:.6em; font-size:.88rem; }
+  .footer-bottom{
+    max-width:1120px; margin:2.5em auto 0; padding-top:1.5em; border-top:1px solid #2A3A5C;
+    font-size:.78rem; color:#7E90AC; display:flex; justify-content:space-between; flex-wrap:wrap; gap:.8em;
+  }
+</style>
+</head>
+<body>
+ 
+<div class="exitbar">
+  <span>⎋ This page can be left instantly and won't stay in your browser history.</span>
+  <button id="exitBtnTop" type="button">Quick exit</button>
+</div>
+ 
+<header>
+  <div class="nav-wrap">
+    <a href="#top" class="logo">
+      <span class="logo-mark" aria-hidden="true"></span>
+      Haven
+    </a>
+    <nav aria-label="Primary">
+      <ul>
+        <li><a href="#report">Report</a></li>
+        <li><a href="#protect">Protect yourself</a></li>
+        <li><a href="#resources">Trusted contacts</a></li>
+        <li><a href="#faq">Questions</a></li>
+      </ul>
+    </nav>
+    <div class="nav-cta">
+      <a href="#report" class="btn btn-primary">Report now</a>
+    </div>
+  </div>
+</header>
+ 
+<main id="top">
+ 
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <span class="eyebrow">For students, by people who've got your back</span>
+        <h1>You're not alone. This is a safe place to speak up.</h1>
+        <p class="lede">Whether it happened once or it's been going on for weeks — online, in the hallway, in a group chat — telling someone is the first step to making it stop. You choose how much you share, and whether anyone knows it was you.</p>
+        <div class="hero-actions">
+          <a href="#report" class="btn btn-primary">Report bullying</a>
+          <a href="#resources" class="btn btn-secondary">Talk to someone now</a>
+        </div>
+        <div class="reassure">
+          <span>🛡</span>
+          <span>Leaving this page: click "Quick exit" anytime, or tap <strong>Esc</strong> three times fast — you'll be moved to a neutral page instantly.</span>
+        </div>
+      </div>
+      <div class="hero-card">
+        <h3>Before you report, know this</h3>
+        <ul>
+          <li>It is never your fault. Reporting is not "snitching" — it's asking for help.</li>
+          <li>You can stay anonymous. No name or login required.</li>
+          <li>A real adult reads every report — not a bot, not a database.</li>
+          <li>You can stop, save, or come back to your report anytime.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+ 
+  <!-- OPTIONS -->
+  <section class="options" id="options">
+    <div class="wrap">
+      <div class="options-head">
+        <span class="eyebrow">Pick what feels right</span>
+        <h2>There's more than one way to tell someone</h2>
+        <p>Some people want to type it out privately. Some want to talk face to face. Both are valid — use whichever gets you heard.</p>
+      </div>
+      <div class="option-grid">
+        <div class="option-card">
+          <div class="option-icon">✎</div>
+          <h3>Report it online</h3>
+          <p>Fill out a short form below. Anonymous by default — add your name only if you want follow-up.</p>
+          <a href="#report" class="btn btn-ghost">Go to the form ↓</a>
+        </div>
+        <div class="option-card">
+          <div class="option-icon">🗣</div>
+          <h3>Tell a trusted adult</h3>
+          <p>A counselor, teacher, coach, or family member can act immediately and stay with you through it.</p>
+          <a href="#resources" class="btn btn-ghost">See who to contact</a>
+        </div>
+        <div class="option-card">
+          <div class="option-icon">☎</div>
+          <h3>Call or text a helpline</h3>
+          <p>If you'd rather talk to someone outside school, trained counselors are reachable any time, day or night.</p>
+          <a href="#resources" class="btn btn-ghost">View helplines</a>
+        </div>
+      </div>
+    </div>
+  </section>
+ 
+  <!-- REPORT FORM -->
+  <section class="report-section" id="report">
+    <div class="wrap report-shell">
+      <div class="report-side">
+        <span class="eyebrow">Report it</span>
+        <h2>Tell us what happened</h2>
+        <p>Share as much or as little as you're comfortable with. Every field except a short description is optional.</p>
+        <ul class="trust-points">
+          <li><span class="dot"></span> Only your school's counseling team can see this — it isn't posted or shared with classmates.</li>
+          <li><span class="dot"></span> You'll get a reference code so you can check on it later without giving your name.</li>
+          <li><span class="dot"></span> If you mention immediate danger, a trusted adult will reach out the same day.</li>
+        </ul>
+      </div>
+ 
+      <div>
+        <form class="card" id="reportForm">
+          <div class="anon-toggle">
+            <p>Report anonymously<br><span style="opacity:.8">Your name stays off the report entirely</span></p>
+            <label class="switch">
+              <input type="checkbox" id="anonToggle" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+ 
+          <div id="nameFields">
+            <div class="row-2">
+              <div class="field">
+                <label for="fname">Your name</label>
+                <input type="text" id="fname" placeholder="Optional">
+              </div>
+              <div class="field">
+                <label for="fgrade">Grade / year</label>
+                <input type="text" id="fgrade" placeholder="Optional">
+              </div>
+            </div>
+          </div>
+ 
+          <div class="field">
+            <label for="fwhat">What happened? *</label>
+            <textarea id="fwhat" required placeholder="Describe what happened, as best you can remember."></textarea>
+            <div class="hint">Include dates, places, or usernames if you know them — it helps, but isn't required.</div>
+          </div>
+ 
+          <div class="row-2">
+            <div class="field">
+              <label for="fwhere">Where did it happen?</label>
+              <select id="fwhere">
+                <option>In class</option>
+                <option>Hallway / locker area</option>
+                <option>Cafeteria</option>
+                <option>Sports / after-school activity</option>
+                <option>Online / social media</option>
+                <option>Group chat or messaging app</option>
+                <option>Somewhere else</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="furgency">How urgent does this feel?</label>
+              <select id="furgency">
+                <option>It's ongoing, I want it to stop</option>
+                <option>It happened once</option>
+                <option>I'm scared for my safety right now</option>
+              </select>
+            </div>
+          </div>
+ 
+          <div class="field">
+            <label>Evidence (optional)</label>
+            <div class="upload-box">Screenshots, messages, or photos — drag files here or tap to upload</div>
+          </div>
+ 
+          <button type="submit" class="btn btn-primary" style="width:100%;">Submit report</button>
+        </form>
+ 
+        <div class="card confirm" id="confirmPanel">
+          <div class="confirm-icon">✓</div>
+          <h3>Your report was received</h3>
+          <p>A trusted staff member will read this and follow up in a way that keeps you safe.</p>
+          <div class="ref" id="refCode">REF-0000</div>
+          <p style="font-size:.85rem;">Save this code — you can use it to check on your report or add more details later.</p>
+          <button type="button" class="btn btn-secondary" id="resetForm">Submit another report</button>
+        </div>
+      </div>
+    </div>
+  </section>
+ 
+  <!-- PROTECT YOURSELF -->
+  <section class="protect" id="protect">
+    <div class="wrap">
+      <div class="protect-head">
+        <span class="eyebrow">While things get sorted out</span>
+        <h2>Ways to protect yourself, starting today</h2>
+        <p>Reporting starts the process — these are things you can do right now, on your own, to feel safer in the meantime.</p>
+      </div>
+ 
+      <div class="protect-grid">
+        <details class="tip" open>
+          <summary><span class="tag">In person</span> Staying safe day to day <span class="chev">+</span></summary>
+          <div class="tip-body">
+            <ul>
+              <li>Stay near friends or a teacher during the times or places it usually happens — bullying is less likely when others are around.</li>
+              <li>It's okay to walk away without responding. Leaving isn't losing.</li>
+              <li>Agree on a signal with a friend so they know when to step in or get an adult.</li>
+              <li>Avoid retaliating physically — it can put you at risk even when you're the one being targeted.</li>
+            </ul>
+          </div>
+        </details>
+ 
+        <details class="tip">
+          <summary><span class="tag">Online</span> Protecting yourself digitally <span class="chev">+</span></summary>
+          <div class="tip-body">
+            <ul>
+              <li>Set your profiles to private and remove people who make you uncomfortable — you don't owe anyone access.</li>
+              <li>Block and mute instead of replying. Engaging often escalates things.</li>
+              <li>Don't delete the messages — screenshot them first, even the upsetting ones. They're proof.</li>
+              <li>Never share passwords, even with close friends.</li>
+            </ul>
+          </div>
+        </details>
+ 
+        <details class="tip">
+          <summary><span class="tag">Records</span> Keeping a paper trail <span class="chev">+</span></summary>
+          <div class="tip-body">
+            <ul>
+              <li>Jot down the date, time, place, and what was said or done, as soon as you can after it happens.</li>
+              <li>Save screenshots to a folder only you can access, not just your camera roll.</li>
+              <li>Note any witnesses — people who saw it happen can support your report.</li>
+              <li>Keep records even after reporting; patterns matter if it continues.</li>
+            </ul>
+          </div>
+        </details>
+ 
+        <details class="tip">
+          <summary><span class="tag">Wellbeing</span> Looking after how you feel <span class="chev">+</span></summary>
+          <div class="tip-body">
+            <ul>
+              <li>What's happening to you is not something you caused or deserve.</li>
+              <li>It's normal to feel angry, embarrassed, or numb — all of those are okay.</li>
+              <li>Talk to someone you trust about how it's affecting you, not just what happened.</li>
+              <li>If it's affecting your sleep, appetite, or you're feeling unsafe with yourself, tell an adult right away — that matters as much as the bullying itself.</li>
+            </ul>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+ 
+  <!-- RESOURCES -->
+  <section id="resources">
+    <div class="wrap">
+      <span class="eyebrow">People you can go to</span>
+      <h2>Trusted contacts</h2>
+      <p class="wrap-narrow">Add your school's real contacts here. Any of these people can help, whether or not you've filed a report online.</p>
+ 
+      <div class="resources-grid" style="margin-top:2em;">
+        <div class="res-card">
+          <span class="eyebrow">School</span>
+          <h3>School Counselor</h3>
+          <p>Confidential, one-on-one support during school hours.</p>
+          <div class="num">[Add name &amp; room number]</div>
+        </div>
+        <div class="res-card">
+          <span class="eyebrow">School</span>
+          <h3>Anti-Bullying Coordinator</h3>
+          <p>Handles formal investigations and follow-up.</p>
+          <div class="num">[Add contact details]</div>
+        </div>
+        <div class="res-card">
+          <span class="eyebrow">Helpline</span>
+          <h3>National / local helpline</h3>
+          <p>Free, confidential, available outside school hours.</p>
+          <div class="num">[Add local helpline number]</div>
+        </div>
+        <div class="res-card">
+          <span class="eyebrow">Emergency</span>
+          <h3>Immediate danger</h3>
+          <p>If you or someone else is in danger right now.</p>
+          <div class="num">[Add local emergency number]</div>
+        </div>
+      </div>
+ 
+      <div class="emergency-note">
+        If you are in immediate danger or thinking about hurting yourself, please contact local emergency services or a crisis line right away. This page is a starting point — it isn't a substitute for urgent, in-person help.
+      </div>
+    </div>
+  </section>
+ 
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <div class="wrap wrap-narrow">
+      <span class="eyebrow">Common questions</span>
+      <h2>Before you report</h2>
+      <div class="faq-list">
+        <details class="faq-item">
+          <summary>Will my parents automatically be told? <span class="chev">+</span></summary>
+          <div class="faq-body">Not automatically. Staff will usually talk with you first about who needs to know and when — except in situations where your safety requires involving a parent or guardian right away.</div>
+        </details>
+        <details class="faq-item">
+          <summary>Can I really stay anonymous? <span class="chev">+</span></summary>
+          <div class="faq-body">Yes. The anonymous toggle is on by default. If you leave it on, no name, login, or device information is attached to your report.</div>
+        </details>
+        <details class="faq-item">
+          <summary>What if I'm not sure it counts as "bullying"? <span class="chev">+</span></summary>
+          <div class="faq-body">Report it anyway. You don't need to label it correctly — if it made you feel unsafe, targeted, or upset, it's worth telling someone.</div>
+        </details>
+        <details class="faq-item">
+          <summary>What happens after I submit a report? <span class="chev">+</span></summary>
+          <div class="faq-body">A staff member reviews it, usually within one school day, and decides on next steps — which may include checking in with you first, quietly, before anything else happens.</div>
+        </details>
+      </div>
+    </div>
+  </section>
+ 
+</main>
+ 
+<footer>
+  <div class="footer-wrap">
+    <div class="footer-brand">
+      <h3>Haven</h3>
+      <p>A quiet, safe corner of the school site for students to report bullying and find support — built with your safety and privacy first.</p>
+    </div>
+    <div class="footer-cols">
+      <div>
+        <h3>Site</h3>
+        <ul>
+          <li><a href="#report">Report bullying</a></li>
+          <li><a href="#protect">Protect yourself</a></li>
+          <li><a href="#resources">Trusted contacts</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Leaving safely</h3>
+        <ul>
+          <li><button id="exitBtnFooter" type="button" class="btn btn-ghost" style="color:#CBD5E5;border-color:#3A4A6C;">Quick exit ⎋</button></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>This page does not track or store your browsing activity.</span>
+    <span>Template — replace placeholder contacts with your school's real information.</span>
+  </div>
+</footer>
+ 
+<script src="script.js"></script>
+ 
+</body>
+</html>
+ 
